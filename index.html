@@ -35,7 +35,7 @@ h1 {
   height: 540px;
 }
 
-.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+// .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
 
 
 </style>
@@ -66,21 +66,21 @@ var Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/to
 
 
 //control that shows state info on hover almostttt works
-var info = L.control();
+// var info = L.control();
 
-  info.onAdd = function (map) {
-    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-    this.update();
-    return this._div;
-};
+  // info.onAdd = function (map) {
+   //  this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+   //  this.update();
+   // return this._div;
+// };
 
-info.update = function (props) {
-  this._div.innerHTML = '<h4>State Population</h4>' + (props ?
-      '<b>' + props.name + '</b><br />' + props.estimate + 'people'
-      : 'Hover over a state');
-};
+// info.update = function (props) {
+ // this._div.innerHTML = '<h4>State Population</h4>' + (props ?
+     // '<b>' + props.name + '</b><br />' + props.estimate + 'people'
+     // : 'Hover over a state');
+// };
 
-info.addTo(map);
+// info.addTo(map);
 
 
 function highlightFeature(e) {
