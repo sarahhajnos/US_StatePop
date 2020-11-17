@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Perceptual Circle Scaling</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
+<style>
+body {
+  margin:0;
+  padding:0;
+  font-family:
+  sans-serif;
+  }
+h1 {
+  position: absolute;
+  left: 50px;
+  top: 10px;
+  padding: 8px 2%;
+  margin: 0;
+  background: rgba(255,121,0,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 3px;
+  color: whitesmoke;
+  font-size: 1.5em;
+  z-index: 800;
+  }
+#map {
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:960px;
+  height: 540px;
+}
+
+.info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+
+
+</style>
+
+<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+  <div id='map'></div>
+  <h1>United States Population Estimates, 2019</h1>
+
+<script>
+console.log("hello world!");
+
+var map = L.map('map', {
+  center: [39.5, -95.3],
+  zoom: 4
+});
+
+
+var Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  ext: 'png'
+}).addTo(map);
+
+
+//control that shows state info on hover almostttt works
+var info = L.control();
+
+  info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+info.update = function (props) {
+  this._div.innerHTML = '<h4>State Population</h4>' + (props ?
+      '<b>' + props.name + '</b><br />' + props.estimate + 'people'
+      : 'Hover over a state');
+};
+
+info.addTo(map);
+
+
+function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+	}
+
+var geojson;
+
+  function resetHighlight(e) {
+  		geojson.resetStyle(e.target);
+  		info.update();
+  	}
+
+  	function zoomToFeature(e) {
+  		map.fitBounds(e.target.getBounds());
+  	}
+
+  	function onEachFeature(feature, layer) {
+  		layer.on({
+  			mouseover: highlightFeature,
+  			mouseout: resetHighlight,
+  			click: zoomToFeature
+  		});
+  	}
+//line 63 t0 73 were added & almost work, 80-114 also need work
+
+states = L.geoJson.ajax("assets/data.geojson", {
+attribution: 'Data: US Census Bureau, Map: SHajnos',
+pointToLayer: function (feature, x){
+  return L.circleMarker(x, {
+    color: '#ff7900',
+    opacity: 1,
+    weight: 2,
+    fillColor: '#ff7900',
+    fillOpacity: .6,
+    radius: calcRadius(feature.properties.estimate)
+}).on({
+      mouseover: function(e){
+        this.setStyle({color: 'blue',fillColor: 'blue'});
+                            },
+      mouseout: function(e){
+        this.setStyle({color:'#ff7900', fillColor: '#ff7900'});
+
+
+	geojson = L.geoJson.ajax("assets/data.geojson", {
+		style: style,
+		onEachFeature: onEachFeature
+	}).addTo(map);
+        } })},});
+
+//line 96-136 were added to test
+
+var minValue = 578759;
+var minRadius = 8;
+
+function calcRadius(val) {
+  return 1.00 * Math.pow(val/minValue,.5) * minRadius;
+  }
+
+states.addTo(map);
+
+
+
+
+  //line 107 to 129 add the legend and dont work
+
+L.control.scale({position: 'bottomleft'}).addTo(map);
+</script>
+
+</body>
+</html>
